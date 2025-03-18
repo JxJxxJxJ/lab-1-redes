@@ -1,0 +1,7 @@
+*.pyc
+
+# Los entornos virtuales no se versionan
+.venv
+.env
+venv
+env
