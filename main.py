@@ -17,15 +17,19 @@ peliculas = [
 ]
 
 
+# @app.get("/") # Usamos esto en vez de la linea 23
 def obtener_peliculas():
-    return jsonify(peliculas)
+    return peliculas, 200 # HTTP OK
+app.add_url_rule('/peliculas', 'obtener_peliculas', obtener_peliculas, methods=['GET'])
 
 
+# Lógica para buscar la película por su ID y devolver sus detalles
+@app.get("/peliculas/<int:id>")
 def obtener_pelicula(id):
-    # Lógica para buscar la película por su ID y devolver sus detalles
-    return jsonify(pelicula_encontrada)
+   return jsonify(peliculas[id-1]), 200 #HTTP OK
 
 
+# @app.post("/peliculas")
 def agregar_pelicula():
     nueva_pelicula = {
         'id': obtener_nuevo_id(),
@@ -36,12 +40,20 @@ def agregar_pelicula():
     print(peliculas)
     return jsonify(nueva_pelicula), 201
 
-
+# @app.put("/peliculas/<int:id>")
 def actualizar_pelicula(id):
     # Lógica para buscar la película por su ID y actualizar sus detalles
+    pelicula_actualizada = {
+        'id': id,
+        'titulo': request.json['titulo'],
+        'genero': request.json['genero']
+    }
+    peliculas[id-1] = pelicula_actualizada
+    print(peliculas)
     return jsonify(pelicula_actualizada)
 
 
+# @app.delete("/peliculas/<int:id>")
 def eliminar_pelicula(id):
     # Lógica para buscar la película por su ID y eliminarla
     return jsonify({'mensaje': 'Película eliminada correctamente'})
@@ -55,7 +67,7 @@ def obtener_nuevo_id():
         return 1
 
 
-app.add_url_rule('/peliculas', 'obtener_peliculas', obtener_peliculas, methods=['GET'])
+# app.add_url_rule('/peliculas', 'obtener_peliculas', obtener_peliculas, methods=['GET'])
 app.add_url_rule('/peliculas/<int:id>', 'obtener_pelicula', obtener_pelicula, methods=['GET'])
 app.add_url_rule('/peliculas', 'agregar_pelicula', agregar_pelicula, methods=['POST'])
 app.add_url_rule('/peliculas/<int:id>', 'actualizar_pelicula', actualizar_pelicula, methods=['PUT'])
