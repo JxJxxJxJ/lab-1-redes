@@ -30,6 +30,8 @@ def day_of_week(day, month, year):
 
 
 # Busca y presenta el proximo feriado
+# Genera una clase para la respuesta,
+# Va a guardar la info del siguiente holiday en self.holiday
 class NextHoliday:
     def __init__(self):
         # A;o actual
@@ -43,7 +45,7 @@ class NextHoliday:
 
     # Busca el siguiente feriado desde hoy
     def set_next(self, holidays):
-        # Dia de hoy
+        # Fecha
         now = date.today()
         # Saco el dia y mes actual de hoy y lo guardo en today
         today = {"day": now.day, "month": now.month}
@@ -58,11 +60,11 @@ class NextHoliday:
             # A -> El primer feriado de este mes posterior al dia de hoy
             # B -> El primer feriado del siguient mes (usado si el mes actual
             (
-                h
-                for h in holidays
-                if h["mes"] == today["month"]
-                and h["dia"] > today["day"]
-                or h["mes"] > today["month"]
+                holiday
+                for holiday in holidays
+                if holiday["mes"] == today["month"]
+                and holiday["dia"] > today["day"]
+                or holiday["mes"] > today["month"]
             ),
             # Fallback en caso de no encontrar el holiday
             holidays[0],
@@ -77,7 +79,7 @@ class NextHoliday:
     # Hago un HTTP request a
     # https://nolaborables.com.ar/api/v2/feriados/{year}
     # Con el year agarrado de self.year (year actual)
-    def fetch_and_set_holidays(self):
+    def fetch_holidays(self):
         # Guardo la response
         response = requests.get(get_url(self.year))
         # response como json en data
@@ -102,26 +104,34 @@ class NextHoliday:
     # eso
     def fetch_holidays_by_type(self, type):
         if (  ## El type es uno valido hago lo mio
-            type
-            == "inamovible" | type
-            == "trasladable" | type
-            == "nolaborable" | type
-            == "puente"
+            type == "inamovible" or
+            type == "trasladable" or
+            type == "nolaborable" or
+            type == "puente"
         ):
-            # Guardo la response
+            # Guardo la response, hago fetch
             response = requests.get(get_url(self.year))
             # response como json en data
             data = response.json()
-            return data
+
+            # Itero sobre los holidays
+            filtered_data = filter(lambda h: h['tipo'] == type, data)
+            
+            print(filtered_data.json())
+
         else:  ## Salgo con error
+            print("Dar un tipo valido")
             exit(1)
 
 
 # Seteo el objeto next_holiday
 next_holiday = NextHoliday()
 ## Lo comento por ahora
-# next_holiday.fetch_and_set_holidays()
+# next_holiday.fetch_holidays()
 # next_holiday.render()
 
 # Printeo el json obtenido, es de todo el a;o
-print(next_holiday.fetch_holidays_by_type(type))
+print(next_holiday.fetch_holidays_by_type("inamovible"))
+print(next_holiday.fetch_holidays_by_type("trasladable"))
+print(next_holiday.fetch_holidays_by_type("nolaborable"))
+print(next_holiday.fetch_holidays_by_type("puente"))
