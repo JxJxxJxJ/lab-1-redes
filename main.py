@@ -1,7 +1,12 @@
 from flask import Flask, jsonify, request
+import random
+from proximo_feriado import NextHoliday
+
+
 
 app = Flask(__name__)
-peliculas = [
+
+peliculas = [ ## Esto es un json <-- ???
     {'id': 1, 'titulo': 'Indiana Jones', 'genero': 'Acción'},
     {'id': 2, 'titulo': 'Star Wars', 'genero': 'Acción'},
     {'id': 3, 'titulo': 'Interstellar', 'genero': 'Ciencia ficción'},
@@ -17,19 +22,18 @@ peliculas = [
 ]
 
 
-# @app.get("/") # Usamos esto en vez de la linea 23
+@app.get("/") # Usamos esto en vez de la linea 23
 def obtener_peliculas():
-    return peliculas, 200 # HTTP OK
-app.add_url_rule('/peliculas', 'obtener_peliculas', obtener_peliculas, methods=['GET'])
+    return peliculas
 
 
 # Lógica para buscar la película por su ID y devolver sus detalles
 @app.get("/peliculas/<int:id>")
 def obtener_pelicula(id):
-   return jsonify(peliculas[id-1]), 200 #HTTP OK
+   return jsonify(peliculas[id-1])
 
 
-# @app.post("/peliculas")
+@app.post("/peliculas")
 def agregar_pelicula():
     nueva_pelicula = {
         'id': obtener_nuevo_id(),
@@ -38,9 +42,9 @@ def agregar_pelicula():
     }
     peliculas.append(nueva_pelicula)
     print(peliculas)
-    return jsonify(nueva_pelicula), 201
+    return jsonify(nueva_pelicula)
 
-# @app.put("/peliculas/<int:id>")
+@app.put("/peliculas/<int:id>")
 def actualizar_pelicula(id):
     # Lógica para buscar la película por su ID y actualizar sus detalles
     pelicula_actualizada = {
@@ -53,7 +57,7 @@ def actualizar_pelicula(id):
     return jsonify(pelicula_actualizada)
 
 
-# @app.delete("/peliculas/<int:id>")
+@app.delete("/peliculas/<int:id>")
 def eliminar_pelicula(id):
     # Lógica para buscar la película por su ID y eliminarla
     return jsonify({'mensaje': 'Película eliminada correctamente'})
@@ -67,11 +71,36 @@ def obtener_nuevo_id():
         return 1
 
 
+"""
+    Aca abajo esta lo necesario para la parte b) del modulo 2
+"""
+
+@app.get("/recomendacion")
+def recomendar():
+    # Capturo el valor de la key json (ej: Crimen)
+    genero = request.json['genero']
+    # Genero el json de peliculas 
+    json_pelis = obtener_peliculas()
+    # Me da una lista de jsons de pelis h que cumplen con h['genero'] == genero
+    filtered_list = list(filter(lambda h: h['genero'] == genero, json_pelis))
+    # Elijo un elemento aleatorio de la lista
+    peli_elegida = random.choice(filtered_list)
+    # Capturo el proximo feriado
+    next_holiday = NextHoliday()
+    next_holiday.fetch_holidays()
+    holiday = next_holiday.holiday
+
+    # Genero el json de output
+    output = { 'holiday' : holiday ,'pelicula' : peli_elegida }
+
+    return jsonify(output)
+
+
 # app.add_url_rule('/peliculas', 'obtener_peliculas', obtener_peliculas, methods=['GET'])
-app.add_url_rule('/peliculas/<int:id>', 'obtener_pelicula', obtener_pelicula, methods=['GET'])
-app.add_url_rule('/peliculas', 'agregar_pelicula', agregar_pelicula, methods=['POST'])
-app.add_url_rule('/peliculas/<int:id>', 'actualizar_pelicula', actualizar_pelicula, methods=['PUT'])
-app.add_url_rule('/peliculas/<int:id>', 'eliminar_pelicula', eliminar_pelicula, methods=['DELETE'])
+# app.add_url_rule('/peliculas/<int:id>', 'obtener_pelicula', obtener_pelicula, methods=['GET'])
+# app.add_url_rule('/peliculas', 'agregar_pelicula', agregar_pelicula, methods=['POST'])
+# app.add_url_rule('/peliculas/<int:id>', 'actualizar_pelicula', actualizar_pelicula, methods=['PUT'])
+# app.add_url_rule('/peliculas/<int:id>', 'eliminar_pelicula', eliminar_pelicula, methods=['DELETE'])
 
 if __name__ == '__main__':
     app.run()

@@ -1,7 +1,9 @@
 import requests  # Libreria para hacer requests HTTP, la uso con APIs
 import json
 from datetime import date  # Liberaria para usar cosas de dates
+from flask import Flask, jsonify, request
 
+app = Flask(__name__)
 
 # Recibe un a;o y retorna la url formada para ese a;o
 def get_url(year):
@@ -128,7 +130,6 @@ class NextHoliday:
             return {"data": feriados_json, "status": 200}
         else:  ## Salgo con error
             return {"error": f"El tipo {type} es invalido" , "status": 400}
-
 
 # Seteo el objeto next_holiday
 next_holiday = NextHoliday()
