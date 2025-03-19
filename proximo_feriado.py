@@ -1,4 +1,5 @@
 import requests  # Libreria para hacer requests HTTP, la uso con APIs
+import json
 from datetime import date  # Liberaria para usar cosas de dates
 
 
@@ -114,24 +115,30 @@ class NextHoliday:
             # response como json en data
             data = response.json()
 
-            # Itero sobre los holidays
-            filtered_data = filter(lambda h: h['tipo'] == type, data)
-            
-            print(filtered_data.json())
+            # Itero sobre los holidays y creo una lista de jsons
+            # Hay 2 formas, listas por commpresion
+            # filtered_data = [h for h in data if h['tipo'] == type]
+            # O usar un filter 
+            filtered_data = list(filter(lambda h: h['tipo'] == type, data))
 
+            # Agarra el arreglo de jsons que es filtered data 
+            # y lo hace un json gigante
+            feriados_json = json.dumps(filtered_data)
+
+            return {"data": feriados_json, "status": 200}
         else:  ## Salgo con error
-            print("Dar un tipo valido")
-            exit(1)
+            return {"error": f"El tipo {type} es invalido" , "status": 400}
 
 
 # Seteo el objeto next_holiday
 next_holiday = NextHoliday()
 ## Lo comento por ahora
-# next_holiday.fetch_holidays()
-# next_holiday.render()
+next_holiday.fetch_holidays()
+next_holiday.render()
 
 # Printeo el json obtenido, es de todo el a;o
-print(next_holiday.fetch_holidays_by_type("inamovible"))
-print(next_holiday.fetch_holidays_by_type("trasladable"))
-print(next_holiday.fetch_holidays_by_type("nolaborable"))
-print(next_holiday.fetch_holidays_by_type("puente"))
+
+# print(next_holiday.fetch_holidays_by_type("inamovible"))
+# print(next_holiday.fetch_holidays_by_type("trasladable"))
+# print(next_holiday.fetch_holidays_by_type("nolaborable"))
+# print(next_holiday.fetch_holidays_by_type("puente"))
