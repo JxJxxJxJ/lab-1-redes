@@ -2,6 +2,15 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.2.0 - 2025-03-19
+#### Features
+- **(feriado_por_tipo,recomendacion)** hechos - (d91fae7) - Gaspar Saenz Valiente
+- **(feriados)** fetch_holidays_by_type terminado - (3896d9b) - Gaspar Saenz Valiente
+- **(feriados)** Hacer fetch de feriados por tipos - (0a663e7) - Jx
+- **(funciones)** Usar filter para filtrar json - (daa7d80) - Jx
+
+- - -
+
 ## 0.1.0 - 2025-03-18
 #### Features
 - **(funciones)** Defini algunas funciones - (d02df52) - Jx
