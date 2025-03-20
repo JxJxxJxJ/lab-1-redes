@@ -174,4 +174,4 @@ cython_debug/
 .pypirc
 
 # No seguir el pdf 
-2025 Lab1_enunciado.pdf
+*.pdf
