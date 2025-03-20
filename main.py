@@ -22,18 +22,26 @@ peliculas = [ ## Esto es un json <-- ???
 ]
 
 
-@app.get("/") # Usamos esto en vez de la linea 23
+# @app.get("/") # Usamos esto en vez de la linea 23
 def obtener_peliculas():
     return peliculas
 
 
-# Lógica para buscar la película por su ID y devolver sus detalles
-@app.get("/peliculas/<int:id>")
+#@app.get("/peliculas/<int:id>")
 def obtener_pelicula(id):
-   return jsonify(peliculas[id-1])
+    # Lógica para buscar la película por su ID y devolver sus detalles
+
+    # Busca la película por su ID en la DB
+    for pelicula in peliculas:
+        if pelicula['id'] == id:
+            pelicula_encontrada = pelicula
+            return jsonify(pelicula_encontrada)
+
+    # Si la película no está en la DB, envía el siguiente mensaje
+    return jsonify({'mensaje': 'Película no encontrada'}), 404 # Error 404
 
 
-@app.post("/peliculas")
+# @app.post("/peliculas")
 def agregar_pelicula():
     nueva_pelicula = {
         'id': obtener_nuevo_id(),
@@ -44,23 +52,37 @@ def agregar_pelicula():
     print(peliculas)
     return jsonify(nueva_pelicula)
 
-@app.put("/peliculas/<int:id>")
+
+# @app.put("/peliculas/<int:id>")
 def actualizar_pelicula(id):
     # Lógica para buscar la película por su ID y actualizar sus detalles
-    pelicula_actualizada = {
-        'id': id,
-        'titulo': request.json['titulo'],
-        'genero': request.json['genero']
-    }
-    peliculas[id-1] = pelicula_actualizada
-    print(peliculas)
-    return jsonify(pelicula_actualizada)
+
+    # Busca la película por su ID y actualiza su título y género
+    for pelicula_a_actualizar in peliculas:
+        if pelicula_a_actualizar['id'] == id:
+            pelicula_a_actualizar['titulo'] = request.json["titulo"]
+            pelicula_a_actualizar['genero'] = request.json["genero"]
+
+            # Si la encuentra, la película se actualiza
+            pelicula_actualizada = pelicula_a_actualizar
+            return jsonify(pelicula_actualizada)
+    
+    # En caso de que la película no esté en la DB, envía el siguiente mensaje
+    return jsonify({'mensaje': 'Película no encontrada'}), 404
 
 
-@app.delete("/peliculas/<int:id>")
+# @app.delete("/peliculas/<int:id>")
 def eliminar_pelicula(id):
     # Lógica para buscar la película por su ID y eliminarla
-    return jsonify({'mensaje': 'Película eliminada correctamente'})
+
+    # Busca la película por su ID y la remueve de la DB
+    for pelicula_a_eliminar in peliculas:
+        if pelicula_a_eliminar['id'] == id:
+            peliculas.remove(pelicula_a_eliminar)
+            return jsonify({'mensaje': 'Película eliminada correctamente'})
+    
+    # En caso de fallo, devuelve la siguiente advertencia
+    return jsonify({'mensaje': 'No se pudo eliminar la película correctamente'}), 404
 
 
 def obtener_nuevo_id():
@@ -75,7 +97,7 @@ def obtener_nuevo_id():
     Aca abajo esta lo necesario para la parte b) del modulo 2
 """
 
-@app.get("/recomendacion")
+# @app.get("/recomendacion")
 def recomendar():
     # Capturo el valor de la key json (ej: Crimen)
     genero = request.json['genero']
@@ -96,11 +118,11 @@ def recomendar():
     return jsonify(output)
 
 
-# app.add_url_rule('/peliculas', 'obtener_peliculas', obtener_peliculas, methods=['GET'])
-# app.add_url_rule('/peliculas/<int:id>', 'obtener_pelicula', obtener_pelicula, methods=['GET'])
-# app.add_url_rule('/peliculas', 'agregar_pelicula', agregar_pelicula, methods=['POST'])
-# app.add_url_rule('/peliculas/<int:id>', 'actualizar_pelicula', actualizar_pelicula, methods=['PUT'])
-# app.add_url_rule('/peliculas/<int:id>', 'eliminar_pelicula', eliminar_pelicula, methods=['DELETE'])
+app.add_url_rule('/peliculas', 'obtener_peliculas', obtener_peliculas, methods=['GET'])
+app.add_url_rule('/peliculas/<int:id>', 'obtener_pelicula', obtener_pelicula, methods=['GET'])
+app.add_url_rule('/peliculas', 'agregar_pelicula', agregar_pelicula, methods=['POST'])
+app.add_url_rule('/peliculas/<int:id>', 'actualizar_pelicula', actualizar_pelicula, methods=['PUT'])
+app.add_url_rule('/peliculas/<int:id>', 'eliminar_pelicula', eliminar_pelicula, methods=['DELETE'])
 
 if __name__ == '__main__':
     app.run()
