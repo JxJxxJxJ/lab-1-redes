@@ -32,6 +32,10 @@ def obtener_peliculas():
 def obtener_pelicula(id):
     # Lógica para buscar la película por su ID y devolver sus detalles
 
+    # Se asegura que el ID sea positivo
+    if id == 0 :
+        return jsonify({'error': 'Se debe un número positivo como ID'}), 400
+
     # Busca la película por su ID en la DB
     for pelicula in peliculas:
         if pelicula['id'] == id:
@@ -58,6 +62,10 @@ def agregar_pelicula():
 def actualizar_pelicula(id):
     # Lógica para buscar la película por su ID y actualizar sus detalles
 
+    # Se asegura que el ID sea positivo
+    if id == 0 :
+        return jsonify({'error': 'Se debe un número positivo como ID'}), 400
+
     # Busca la película por su ID y actualiza su título y género
     for pelicula_a_actualizar in peliculas:
         if pelicula_a_actualizar['id'] == id:
@@ -75,6 +83,10 @@ def actualizar_pelicula(id):
 @app.delete("/peliculas/<int:id>")
 def eliminar_pelicula(id):
     # Lógica para buscar la película por su ID y eliminarla
+    
+    # Se asegura que el ID sea positivo
+    if id == 0 :
+        return jsonify({'error': 'Se debe un número positivo como ID'}), 400
 
     # Busca la película por su ID y la remueve de la DB
     for pelicula_a_eliminar in peliculas:
@@ -95,24 +107,21 @@ def obtener_nuevo_id():
     
 @app.get("/peliculas/genero/<string:genero>")
 def obtener_pelicula_por_genero(genero):
-    if not genero:
-        return jsonify({'error': 'Se debe especificar un género'}) , 400 # HTTP error
     # Creo una lista con las películas del genero indicado
     filtradas = [p for p in peliculas if normalizar_texto(p['genero']) == normalizar_texto(genero)]
     if not filtradas:
         return jsonify({'mensaje': 'No se encontraron '
                         'peliculas del genero seleccionado'}), 404 # HTTP not found
-
+    
     return jsonify(filtradas), 200 # HTTP OK
 
 @app.get("/peliculas/titulo/<string:titulo>")
 def buscar_peliculas_por_titulo(titulo):
-    if not titulo:
-        return jsonify({'error': 'Se debe ingresar un titulo para buscar'}), 400 # HTTM	error
     # Creo una lista con las películas que contengan el string en el titulo
     filtradas = [p for p in peliculas if normalizar_texto(titulo) in normalizar_texto(p['titulo'])]
     if not filtradas:
         return jsonify({'mensaje': 'No se encontraron películas relacionadas'}), 404 # HTTM not found
+    
     return jsonify(filtradas), 200 # HTTP ok
 
 
