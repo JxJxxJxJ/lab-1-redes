@@ -100,12 +100,26 @@ def eliminar_pelicula(id):
     return jsonify({'mensaje': 'No se pudo eliminar la película correctamente'}), 404
 
 
+# def obtener_nuevo_id():
+#     if len(peliculas) > 0:
+#         ultimo_id = peliculas[-1]['id']
+#         return ultimo_id + 1
+#     else:
+#         return 1
+
+# Nueva versión de obtener_nuevo_id() que surge del siguiente problema: al eli-
+# minar una película, por ejemplo aquella con el ID 5, deja ese espacio vacío.
+# Cuando se busca incorporar un nuevo film a la DB, esta tomará el IDfinal+1,
+# dejando la lista con IDs 1,2,3,4,6,...,12,13 en este caso. De esta manera,
+# ese espacio libre es ocupado al instante, y solo agrega una al final cuando
+# la secuencia de IDs de películas es continua 
 def obtener_nuevo_id():
-    if len(peliculas) > 0:
-        ultimo_id = peliculas[-1]['id']
-        return ultimo_id + 1
-    else:
-        return 1
+    ids_existentes = {pelicula['id'] for pelicula in peliculas}
+    nuevo_id = 1
+    while nuevo_id in ids_existentes:
+        nuevo_id += 1
+    return nuevo_id
+
     
 @app.get("/peliculas/genero/<string:genero>")
 def obtener_pelicula_por_genero(genero):
