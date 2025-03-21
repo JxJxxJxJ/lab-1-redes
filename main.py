@@ -50,8 +50,10 @@ def obtener_pelicula(id):
 def agregar_pelicula():
     nueva_pelicula = {
         'id': obtener_nuevo_id(),
-        'titulo': request.json['titulo'],
-        'genero': request.json['genero']
+        # De esta forma todos los títulos y géneros añadidos iniciarán con ma-
+        # yúsculas, el resto todo minúsculas y se eliminarán las tildes.
+        'titulo': normalizar_texto(request.json['titulo']).title(),
+        'genero': normalizar_texto(request.json['genero']).title()
     }
     peliculas.append(nueva_pelicula)
     print(peliculas)
