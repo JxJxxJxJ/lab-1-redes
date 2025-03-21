@@ -92,6 +92,28 @@ def obtener_nuevo_id():
         return ultimo_id + 1
     else:
         return 1
+    
+@app.get("/peliculas/genero/<string:genero>")
+def obtener_pelicula_por_genero(genero):
+    if not genero:
+        return jsonify({'error': 'Se debe especificar un género'}) , 400 # HTTP error
+    # Creo una lista con las películas del genero indicado
+    filtradas = [p for p in peliculas if normalizar_texto(p['genero']) == normalizar_texto(genero)]
+    if not filtradas:
+        return jsonify({'mensaje': 'No se encontraron '
+                        'peliculas del genero seleccionado'}), 404 # HTTP not found
+
+    return jsonify(filtradas), 200 # HTTP OK
+
+@app.get("/peliculas/titulo/<string:titulo>")
+def buscar_peliculas_por_titulo(titulo):
+    if not titulo:
+        return jsonify({'error': 'Se debe ingresar un titulo para buscar'}), 400 # HTTM	error
+    # Creo una lista con las películas que contengan el string en el titulo
+    filtradas = [p for p in peliculas if normalizar_texto(titulo) in normalizar_texto(p['titulo'])]
+    if not filtradas:
+        return jsonify({'mensaje': 'No se encontraron películas relacionadas'}), 404 # HTTM not found
+    return jsonify(filtradas), 200 # HTTP ok
 
 
 # Posiblemente implementar algo para el caso de que no hayan películas en la
