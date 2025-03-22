@@ -6,7 +6,7 @@ import requests_mock
 def mock_response():
     with requests_mock.Mocker() as m:
         # Simulamos la respuesta para obtener todas las películas
-        m.get('http://localhost:5000/peliculas', json=[
+        m.get('http://localhost:5000/', json=[
             {'id': 1, 'titulo': 'Indiana Jones', 'genero': 'Acción'},
             {'id': 2, 'titulo': 'Star Wars', 'genero': 'Acción'}
         ])
@@ -23,10 +23,19 @@ def mock_response():
         # Simulamos la respuesta para eliminar una película
         m.delete('http://localhost:5000/peliculas/1', status_code=200)
 
+        # Simulamos la respuesta al sugerir una película aleatoria
+        m.get('http://localhost:5000/peliculas/recomendacion', status_code=200)
+
+        # Simulamos la respuesta al sugerir una película aleatoria de acción
+        m.get('http://localhost:5000/peliculas/recomendacion/aCcÍón', status_code=200)
+
+        # Simulamos la respuesta al sugerir una película aleatoria de terror, género inexistente en la DB
+        m.get('http://localhost:5000/peliculas/recomendacion/terror', status_code=404)
+
         yield m
 
 def test_obtener_peliculas(mock_response):
-    response = requests.get('http://localhost:5000/peliculas')
+    response = requests.get('http://localhost:5000/')
     assert response.status_code == 200
     assert len(response.json()) == 2
 
@@ -50,3 +59,17 @@ def test_actualizar_detalle_pelicula(mock_response):
 def test_eliminar_pelicula(mock_response):
     response = requests.delete('http://localhost:5000/peliculas/1')
     assert response.status_code == 200
+
+def test_sugerir_pelicula_aleatoria(mock_response):
+    response = requests.get('http://localhost:5000/peliculas/recomendacion')
+    assert response.status_code == 200
+
+def test_sugerir_pelicula_aleatoria_por_genero_exito(mock_response):
+    genero = "aCcÍón"
+    response = requests.get(f'http://localhost:5000/peliculas/recomendacion/{genero}')
+    assert response.status_code == 200
+
+def test_sugerir_pelicula_aleatoria_por_genero_fallo(mock_response):
+    genero = "terror"
+    response = requests.get(f'http://localhost:5000/peliculas/recomendacion/{genero}')
+    assert response.status_code == 404
