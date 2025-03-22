@@ -20,9 +20,26 @@ def mock_response():
         # Simulamos la respuesta para actualizar los detalles de una película
         m.put('http://localhost:5000/peliculas/1', status_code=200, json={'id': 1, 'titulo': 'Nuevo título', 'genero': 'Comedia'})
 
+        # Simulamos la respuesta para actualizar los detalles de una 
+        # película con ID = 0
+        m.put('http://localhost:5000/peliculas/0', status_code=400, json=
+              {'error': 'Se debe ingresar un número positivo como ID'})
+
+        # Simulamos la respuesta para actualizar los detalles de una 
+        # película no encontrada
+        m.put('http://localhost:5000/peliculas/999', status_code=404, json=
+              {'mensaje': 'Película no encontrada'})
+
         # Simulamos la respuesta para eliminar una película
         m.delete('http://localhost:5000/peliculas/1', status_code=200)
 
+        # Simulamos la respuesta para eliminar una película con ID = 0
+        m.delete('http://localhost:5000/peliculas/0', status_code=400, json=
+                 {'error': 'Se debe un ingresar número positivo como ID'})
+        # Simulamos la respuesta para eliminar una película con ID = 0
+        m.delete('http://localhost:5000/peliculas/999', status_code=404, json=
+                 {'mensaje': 'No se pudo eliminar la película correctamente'})
+        
         # Simulamos la respuesta para obtener películas por género
         m.get('http://localhost:5000/peliculas/genero/dRámA', status_code=200, json=[
             {'id': 1, 'titulo': 'Indiana Jones', 'genero': 'Acción'},
@@ -81,9 +98,26 @@ def test_actualizar_detalle_pelicula(mock_response):
     assert response.status_code == 200
     assert response.json()['titulo'] == 'Nuevo título'
 
+def test_actualizar_detalle_pelicula_fallo_id(mock_response):
+    response = requests.put('http://localhost:5000/peliculas/0', json={'titulo': 'Título inválido', 'genero': 'Acción'})
+    assert response.status_code == 400
+
+def test_actualizar_detalle_pelicula_no_encontrada(mock_response):
+    datos_actualizados = {'titulo': 'Nuevo título', 'genero': 'Comedia'}
+    response = requests.put('http://localhost:5000/peliculas/999', json=datos_actualizados)
+    assert response.status_code == 404
+
 def test_eliminar_pelicula(mock_response):
     response = requests.delete('http://localhost:5000/peliculas/1')
     assert response.status_code == 200
+
+def test_eliminar_pelicula_fallo_id(mock_response):
+    response = requests.delete('http://localhost:5000/peliculas/0')
+    assert response.status_code == 400
+
+def test_eliminar_pelicula_no_encontrada(mock_response):
+    response = requests.delete('http://localhost:5000/peliculas/999')
+    assert response.status_code == 404
 
 def test_obtener_pelicula_por_genero_exito(mock_response):
     genero = "dRámA"
