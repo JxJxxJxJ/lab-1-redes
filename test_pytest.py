@@ -23,6 +23,25 @@ def mock_response():
         # Simulamos la respuesta para eliminar una película
         m.delete('http://localhost:5000/peliculas/1', status_code=200)
 
+        # Simulamos la respuesta para obtener películas por género
+        m.get('http://localhost:5000/peliculas/genero/dRámA', status_code=200, json=[
+            {'id': 1, 'titulo': 'Indiana Jones', 'genero': 'Acción'},
+            {'id': 2, 'titulo': 'Star Wars', 'genero': 'Acción'}
+        ])
+
+        # Simulados la respuesta para obtener películas por género con fallo
+        m.get('http://localhost:5000/peliculas/genero/romance', status_code=404)
+
+
+        # Simulamos la respuesta para buscar películas por título
+        m.get('http://localhost:5000/peliculas/titulo/loRd of THE', status_code=200, json=[
+            {'id': 1, 'titulo': 'Indiana Jones', 'genero': 'Acción'},
+            {'id': 2, 'titulo': 'Star Wars', 'genero': 'Acción'}
+        ])
+
+        # Simulamos la respuesta para buscar películas por título con fallo
+        m.get('http://localhost:5000/peliculas/titulo/viernes', status_code=404)
+
         # Simulamos la respuesta al sugerir una película aleatoria
         m.get('http://localhost:5000/peliculas/recomendacion', status_code=200)
 
@@ -65,6 +84,27 @@ def test_actualizar_detalle_pelicula(mock_response):
 def test_eliminar_pelicula(mock_response):
     response = requests.delete('http://localhost:5000/peliculas/1')
     assert response.status_code == 200
+
+def test_obtener_pelicula_por_genero_exito(mock_response):
+    genero = "dRámA"
+    response = requests.get(f'http://localhost:5000/peliculas/genero/{genero}')
+    assert response.status_code == 200
+
+
+def test_obtener_pelicula_por_genero_fallo(mock_response):
+    genero = "romance"
+    response = requests.get(f'http://localhost:5000/peliculas/genero/{genero}')
+    assert response.status_code == 404
+
+def test_buscar_peliculas_por_titulo_exito(mock_response):
+    titulo = "loRd of THE"
+    response = requests.get(f'http://localhost:5000/peliculas/titulo/{titulo}')
+    assert response.status_code == 200
+
+def test_buscar_peliculas_por_titulo_fallo(mock_response):
+    titulo = "viernes"
+    response = requests.get(f'http://localhost:5000/peliculas/titulo/{titulo}')
+    assert response.status_code == 404
 
 def test_sugerir_pelicula_aleatoria(mock_response):
     response = requests.get('http://localhost:5000/peliculas/recomendacion')
