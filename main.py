@@ -21,7 +21,7 @@ peliculas = [
 ]
 
 
-# ---------------------------- FUNCIONES AUXILIARES ---------------------------
+# --------------------------- FUNCIONES AUXILIARES ---------------------------
 # def obtener_nuevo_id():
 #     if len(peliculas) > 0:
 #         ultimo_id = peliculas[-1]['id']
@@ -55,7 +55,7 @@ def normalizar_texto(texto):
     return texto
 
 
-# ---------------------------- FUNCIONES PRINCIPALES ---------------------------
+# --------------------------- FUNCIONES PRINCIPALES ---------------------------
 @app.get("/")
 def obtener_peliculas():
     return peliculas
@@ -66,17 +66,18 @@ def obtener_pelicula(id):
     # Lógica para buscar la película por su ID y devolver sus detalles
 
     # Se asegura que el ID sea positivo
-    if id == 0 :
-        return jsonify({'error': 'Se debe un número positivo como ID'}), 400
+    if id == 0:
+        return jsonify({'error': 'Se debe un ingresar un número positivo '
+                        'como ID'}), 400 # HTTP Bad Request
 
     # Busca la película por su ID en la DB
     for pelicula in peliculas:
         if pelicula['id'] == id:
             pelicula_encontrada = pelicula
-            return jsonify(pelicula_encontrada), 200
+            return jsonify(pelicula_encontrada), 200 # HTTP OK
 
     # Si la película no está en la DB, envía el siguiente mensaje
-    return jsonify({'mensaje': 'Película no encontrada'}), 404
+    return jsonify({'mensaje': 'Película no encontrada'}), 404 # HTTP Not Found
 
 
 @app.post("/peliculas")
@@ -94,7 +95,7 @@ def agregar_pelicula():
     }
     peliculas.append(nueva_pelicula)
     print(peliculas)
-    return jsonify(nueva_pelicula)
+    return jsonify(nueva_pelicula), 201  # HTTP Created
 
 
 @app.put("/peliculas/<int:id>")
@@ -102,21 +103,26 @@ def actualizar_pelicula(id):
     # Lógica para buscar la película por su ID y actualizar sus detalles
 
     # Se asegura que el ID sea positivo
-    if id == 0 :
-        return jsonify({'error': 'Se debe un número positivo como ID'}), 400
+    if id == 0:
+        return jsonify({'error': 'Se debe ingresar un número positivo '
+                        'como ID'}), 400 # HTTP Bad Request
 
     # Busca la película por su ID y actualiza su título y género
     for pelicula_a_actualizar in peliculas:
         if pelicula_a_actualizar['id'] == id:
-            pelicula_a_actualizar['titulo'] = request.json["titulo"]
-            pelicula_a_actualizar['genero'] = request.json["genero"]
+            # Normalización del título y género de la película a actualizar
+            titulo = normalizar_texto(request.json['titulo']).title()
+            genero = normalizar_texto(request.json['genero']).title()
+
+            pelicula_a_actualizar['titulo'] = titulo
+            pelicula_a_actualizar['genero'] = genero
 
             # Si la encuentra, la película se actualiza
             pelicula_actualizada = pelicula_a_actualizar
-            return jsonify(pelicula_actualizada), 200
+            return jsonify(pelicula_actualizada), 200 # HTTP OK
     
     # En caso de que la película no esté en la DB, envía el siguiente mensaje
-    return jsonify({'mensaje': 'Película no encontrada'}), 404
+    return jsonify({'mensaje': 'Película no encontrada'}), 404 # HTTP Not Found
 
 
 @app.delete("/peliculas/<int:id>")
@@ -124,19 +130,20 @@ def eliminar_pelicula(id):
     # Lógica para buscar la película por su ID y eliminarla
     
     # Se asegura que el ID sea positivo
-    if id == 0 :
-        return jsonify({'error': 'Se debe un número positivo como ID'}), 400
+    if id == 0:
+        return jsonify({'error': 'Se debe un ingresar número positivo '
+                        'como ID'}), 400 # HTTP Bad Request
 
     # Busca la película por su ID y la remueve de la DB
     for pelicula_a_eliminar in peliculas:
         if pelicula_a_eliminar['id'] == id:
             peliculas.remove(pelicula_a_eliminar)
             return jsonify({'mensaje': 'Película eliminada '
-                            'correctamente'}), 200
+                            'correctamente'}), 200 # HTTP OK
     
     # En caso de fallo, devuelve la siguiente advertencia
     return jsonify({'mensaje': 'No se pudo eliminar la película '
-                    'correctamente'}), 404
+                    'correctamente'}), 404 # HTTP Not Found
 
     
 @app.get("/peliculas/genero/<string:genero>")
@@ -148,30 +155,30 @@ def obtener_pelicula_por_genero(genero):
     ]
     if not filtradas:
         return jsonify({'mensaje': 'No se encontraron películas del '
-                        'género seleccionado'}), 404 # HTTP not found
+                        'género seleccionado'}), 404 # HTTP Not Found
     
     return jsonify(filtradas), 200 # HTTP OK
 
 
 @app.get("/peliculas/titulo/<string:titulo>")
 def buscar_peliculas_por_titulo(titulo):
-    # Creo una lista con las películas que contengan el string en el titulo
+    # Creo una lista con las películas que contengan el string en el título
     filtradas = [
         p for p in peliculas 
         if normalizar_texto(titulo) in normalizar_texto(p['titulo'])
     ]
     if not filtradas:
         return jsonify({'mensaje': 'No se encontraron películas '
-                        'relacionadas'}), 404 # HTTM not found
+                        'relacionadas'}), 404 # HTTP Not Found
     
-    return jsonify(filtradas), 200 # HTTP ok
+    return jsonify(filtradas), 200 # HTTP OK
 
 
 @app.get("/peliculas/recomendacion")
 def sugerir_pelicula_aleatoria():
     # random escoge una película cualquiera del json de películas
     pelicula_aleatoria = random.choice(peliculas)
-    return jsonify(pelicula_aleatoria), 200
+    return jsonify(pelicula_aleatoria), 200 # HTTP OK
 
 
 @app.get("/peliculas/recomendacion/<string:genero>")
@@ -201,10 +208,10 @@ def sugerir_pelicula_aleatoria_por_genero(genero):
     # quiera de la lista previamente creada
     if peliculas_filtradas:
         pelicula_elegida = random.choice(peliculas_filtradas)
-        return jsonify(pelicula_elegida), 200 
+        return jsonify(pelicula_elegida), 200 # HTTP OK
     else:
         return jsonify({'error': 'No se encontraron películas del género '
-                        'seleccionado'}), 404
+                        'seleccionado'}), 404 # HTTP Not Found
         
 
 """
@@ -215,13 +222,13 @@ def sugerir_pelicula_aleatoria_por_genero(genero):
 def recomendar():
     # Capturo el valor de la key json (ej: Crimen)
     genero = request.json['genero']
-    # Genero el json de peliculas 
+    # Genero el json de películas 
     json_pelis = obtener_peliculas()
     # Me da una lista de jsons de pelis h que cumplen con h['genero'] == genero
     filtered_list = list(filter(lambda h: h['genero'] == genero, json_pelis))
     # Elijo un elemento aleatorio de la lista
     peli_elegida = random.choice(filtered_list)
-    # Capturo el proximo feriado
+    # Capturo el próximo feriado
     next_holiday = NextHoliday()
     next_holiday.fetch_holidays()
     holiday = next_holiday.holiday
