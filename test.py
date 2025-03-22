@@ -57,6 +57,33 @@ else:
     print("Error al eliminar la película.")
 print()
 
+# Obtener todas las películas de un género
+genero = "CIénCia fÍcCion" # Genero a obtener y testeamos la normalización del género
+response = requests.get(f'http://localhost:5000/peliculas/genero/{genero}')
+if response.status_code == 200:
+    obtener_pelicula_por_genero = response.json()
+    print("Películas por género:")
+    for pelicula in obtener_pelicula_por_genero:
+        print(f"ID: {pelicula['id']}, Título: {pelicula['titulo']}, " 
+              f"Género: {pelicula['genero']}")
+else:
+    print(f"Error al obtener películas del género '{genero}'.")
+print()
+
+# Buscar peliculas que contengan en el título el string ingresado
+titulo = "tHé" # String a buscar entre los títulos existentes 
+               # y testeamos la normalización del título
+response = requests.get(f'http://localhost:5000/peliculas/titulo/{titulo}')
+if response.status_code == 200:
+    buscar_peliculas_por_titulo = response.json()
+    print("Películas por título sugerido:")
+    for pelicula in buscar_peliculas_por_titulo:
+        print(f"ID: {pelicula['id']}, Título: {pelicula['titulo']}, " 
+              f"Género: {pelicula['genero']}")
+else:
+    print(f"Error al obtener películas con el titulo '{titulo}'.")
+print()
+
 # Sugerir una película aleatoria
 response = requests.get('http://localhost:5000/peliculas/recomendacion')
 if response.status_code == 200:
