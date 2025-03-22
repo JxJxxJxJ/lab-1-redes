@@ -32,6 +32,12 @@ def mock_response():
         # Simulamos la respuesta al sugerir una película aleatoria de terror, género inexistente en la DB
         m.get('http://localhost:5000/peliculas/recomendacion/terror', status_code=404)
 
+        # Simulamos la respuesta para obtener detalles de una película ingresando el ID 0 (Bad Request)
+        m.get('http://localhost:5000/peliculas/0', status_code=400)
+
+        # Simulamos la respuesta para obtener detalles de una película inexistente en la DB
+        m.get('http://localhost:5000/peliculas/253', status_code=404)
+
         yield m
 
 def test_obtener_peliculas(mock_response):
@@ -72,4 +78,12 @@ def test_sugerir_pelicula_aleatoria_por_genero_exito(mock_response):
 def test_sugerir_pelicula_aleatoria_por_genero_fallo(mock_response):
     genero = "terror"
     response = requests.get(f'http://localhost:5000/peliculas/recomendacion/{genero}')
+    assert response.status_code == 404
+
+def test_obtener_detalle_pelicula_id0(mock_response):
+    response = requests.get('http://localhost:5000/peliculas/0')
+    assert response.status_code == 400
+
+def test_obtener_detalle_pelicula_inexistente(mock_response):
+    response = requests.get('http://localhost:5000/peliculas/253')
     assert response.status_code == 404

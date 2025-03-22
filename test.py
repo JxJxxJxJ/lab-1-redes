@@ -89,3 +89,28 @@ if response.status_code == 200:
     print("Test no aprobado.")
 else:
     print(f'Error al escoger una película del género {genero}. Test aprobado.')
+print()
+
+# Obtener detalles de una película específica cuyo ID es 0
+id_pelicula = 0  # ID de la película a obtener
+response = requests.get(f'http://localhost:5000/peliculas/{id_pelicula}')
+if response.status_code == 400:
+    print("Error al escoger un ID igual a 0. Test aprobado.")
+else:
+    pelicula = response.json()
+    print("Detalles de la película:")
+    print(f"ID: {pelicula['id']}, Título: {pelicula['titulo']}, Género: {pelicula['genero']}")
+    print("Test no aprobado.")
+print()
+
+# Obtener detalles de una película específica que no existe en la DB
+id_pelicula = 253  # ID de la película a obtener (la cual no existe)
+response = requests.get(f'http://localhost:5000/peliculas/{id_pelicula}')
+if response.status_code == 404:
+    print("Error al buscar la película (no existe). Test aprobado.")
+else:
+    pelicula = response.json()
+    print("Detalles de la película:")
+    print(f"ID: {pelicula['id']}, Título: {pelicula['titulo']}, Género: {pelicula['genero']}")
+    print("Test no aprobado.")
+print()
