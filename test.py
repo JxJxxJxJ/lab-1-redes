@@ -1,7 +1,7 @@
 import requests
 
 # Obtener todas las películas
-response = requests.get('http://localhost:5000/peliculas')
+response = requests.get('http://localhost:5000/')
 peliculas = response.json()
 print("Películas existentes:")
 for pelicula in peliculas:
@@ -55,3 +55,89 @@ if response.status_code == 200:
     print("Película eliminada correctamente.")
 else:
     print("Error al eliminar la película.")
+print()
+
+# Obtener todas las películas de un género
+genero = "CIénCia fÍcCion" # Genero a obtener y testeamos la normalización del género
+response = requests.get(f'http://localhost:5000/peliculas/genero/{genero}')
+if response.status_code == 200:
+    obtener_pelicula_por_genero = response.json()
+    print("Películas por género:")
+    for pelicula in obtener_pelicula_por_genero:
+        print(f"ID: {pelicula['id']}, Título: {pelicula['titulo']}, " 
+              f"Género: {pelicula['genero']}")
+else:
+    print(f"Error al obtener películas del género '{genero}'.")
+print()
+
+# Buscar peliculas que contengan en el título el string ingresado
+titulo = "tHé" # String a buscar entre los títulos existentes 
+               # y testeamos la normalización del título
+response = requests.get(f'http://localhost:5000/peliculas/titulo/{titulo}')
+if response.status_code == 200:
+    buscar_peliculas_por_titulo = response.json()
+    print("Películas por título sugerido:")
+    for pelicula in buscar_peliculas_por_titulo:
+        print(f"ID: {pelicula['id']}, Título: {pelicula['titulo']}, " 
+              f"Género: {pelicula['genero']}")
+else:
+    print(f"Error al obtener películas con el titulo '{titulo}'.")
+print()
+
+# Sugerir una película aleatoria
+response = requests.get('http://localhost:5000/peliculas/recomendacion')
+if response.status_code == 200:
+    pelicula_sugerida = response.json()
+    print("Película sugerida:")
+    print(f"ID: {pelicula_sugerida['id']}, Título: {pelicula_sugerida['titulo']}, Género: {pelicula_sugerida['genero']}")
+else:
+    print("Error al escoger una película aleatoria.")
+print()
+
+# Sugerir una película aleatoria por género (género existente en la DB)
+genero = "aCcÍón"  # Para testear también la normalización del género
+response = requests.get(f'http://localhost:5000/peliculas/recomendacion/{genero}')
+if response.status_code == 200:
+    pelicula_sugerida_genero = response.json()
+    print("Película sugerida del género seleccionado:")
+    print(f"ID: {pelicula_sugerida_genero['id']}, Título: {pelicula_sugerida_genero['titulo']}, Género: {pelicula_sugerida_genero['genero']}")
+    print("Test aprobado.")
+else:
+    print(f'Error al escoger una película del género {genero}. Test no aprobado')
+print()
+
+# Sugerir una película aleatoria por género (género inexistente en la DB)
+genero = "terror"  # Para testear también la normalización del género
+response = requests.get(f'http://localhost:5000/peliculas/recomendacion/{genero}')
+if response.status_code == 200:
+    pelicula_sugerida_genero = response.json()
+    print("Película sugerida del género seleccionado:")
+    print(f"ID: {pelicula_sugerida_genero['id']}, Título: {pelicula_sugerida_genero['titulo']}, Género: {pelicula_sugerida_genero['genero']}")
+    print("Test no aprobado.")
+else:
+    print(f'Error al escoger una película del género {genero}. Test aprobado.')
+print()
+
+# Obtener detalles de una película específica cuyo ID es 0
+id_pelicula = 0  # ID de la película a obtener
+response = requests.get(f'http://localhost:5000/peliculas/{id_pelicula}')
+if response.status_code == 400:
+    print("Error al escoger un ID igual a 0. Test aprobado.")
+else:
+    pelicula = response.json()
+    print("Detalles de la película:")
+    print(f"ID: {pelicula['id']}, Título: {pelicula['titulo']}, Género: {pelicula['genero']}")
+    print("Test no aprobado.")
+print()
+
+# Obtener detalles de una película específica que no existe en la DB
+id_pelicula = 253  # ID de la película a obtener (la cual no existe)
+response = requests.get(f'http://localhost:5000/peliculas/{id_pelicula}')
+if response.status_code == 404:
+    print("Error al buscar la película (no existe). Test aprobado.")
+else:
+    pelicula = response.json()
+    print("Detalles de la película:")
+    print(f"ID: {pelicula['id']}, Título: {pelicula['titulo']}, Género: {pelicula['genero']}")
+    print("Test no aprobado.")
+print()
