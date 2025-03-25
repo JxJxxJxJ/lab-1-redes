@@ -141,3 +141,30 @@ else:
     print(f"ID: {pelicula['id']}, Título: {pelicula['titulo']}, Género: {pelicula['genero']}")
     print("Test no aprobado.")
 print()
+
+# Obtener todas las películas de un género (género existente en la DB)
+genero = "romance"  
+response = requests.get(f'http://localhost:5000/peliculas/genero/{genero}')
+if response.status_code == 200:
+    peliculas_obtenidas_por_genero = response.json()
+    print("Películas encontradas del género seleccionado:")
+    for pelicula in peliculas_obtenidas_por_genero:
+        print(f"ID: {pelicula['id']}, Título: {pelicula['titulo']}, Género: {pelicula['genero']}")
+    print("Test no aprobado.")
+else:
+    print(f"Error al obtener las películas del género '{genero}'. Test aprobado.")
+print()
+
+
+# Buscar peliculas que contengan en el título el string ingresado (título inexistente)
+titulo = "viernes"  
+response = requests.get(f'http://localhost:5000/peliculas/titulo/{titulo}')
+if response.status_code == 200:
+    peliculas_por_titulo = response.json()
+    print("Películas con el título seleccionado:")
+    for pelicula in peliculas_por_titulo:
+        print(f"ID: {pelicula['id']}, Título: {pelicula['titulo']}, Género: {pelicula['genero']}")
+    print("Test no aprobado.")
+else:
+    print(f"Error al encontrar las películas con '{titulo}' en su título. Test aprobado.")
+print()
