@@ -10,7 +10,7 @@ def client():
         yield client
 
 def test_obtener_peliculas(client):
-    response = client.get('/peliculas')
+    response = client.get('/')
     assert response.status_code == 200
     data = response.get_json()
     # Dependiendo del estado inicial de 'peliculas', ajustar la cantidad de elementos esperados

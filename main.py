@@ -55,6 +55,10 @@ def normalizar_texto(texto):
     return texto
 
 
+# Coloca la primera letra de un 'texto' en mayúscula, si es que existe
+def capitalizar_primer_letra(texto):
+    return texto[0].upper() + texto[1:] if texto else texto
+
 # --------------------------- FUNCIONES PRINCIPALES ---------------------------
 @app.get("/")
 def obtener_peliculas():
@@ -90,8 +94,8 @@ def agregar_pelicula():
         # '{"titulo": "dÉADṔOol", "genero": "cÓmeDiá"}'
         # Transformándolo a:
         # '{"titulo": "Deadpool", "genero": "Comedia"}'
-        'titulo': normalizar_texto(request.json['titulo']).title(),
-        'genero': normalizar_texto(request.json['genero']).title()
+        'titulo': capitalizar_primer_letra(normalizar_texto(request.json['titulo'])),
+        'genero': capitalizar_primer_letra(normalizar_texto(request.json['genero']))
     }
     peliculas.append(nueva_pelicula)
     print(peliculas)
@@ -111,8 +115,8 @@ def actualizar_pelicula(id):
     for pelicula_a_actualizar in peliculas:
         if pelicula_a_actualizar['id'] == id:
             # Normalización del título y género de la película a actualizar
-            titulo = normalizar_texto(request.json['titulo']).title()
-            genero = normalizar_texto(request.json['genero']).title()
+            titulo = capitalizar_primer_letra(normalizar_texto(request.json['titulo']))
+            genero = capitalizar_primer_letra(normalizar_texto(request.json['genero']))
 
             pelicula_a_actualizar['titulo'] = titulo
             pelicula_a_actualizar['genero'] = genero
