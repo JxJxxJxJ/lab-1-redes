@@ -104,29 +104,27 @@ def agregar_pelicula():
 
 @app.put("/peliculas/<int:id>")
 def actualizar_pelicula(id):
-    # Lógica para buscar la película por su ID y actualizar sus detalles
-
     # Se asegura que el ID sea positivo
     if id == 0:
-        return jsonify({'error': 'Se debe ingresar un número positivo '
-                        'como ID'}), 400 # HTTP Bad Request
+        return jsonify({'error': 'Se debe ingresar un número positivo como ID'}), 400
 
     # Busca la película por su ID y actualiza su título y género
     for pelicula_a_actualizar in peliculas:
         if pelicula_a_actualizar['id'] == id:
-            # Normalización del título y género de la película a actualizar
-            titulo = capitalizar_primer_letra(normalizar_texto(request.json['titulo']))
+            # Se conserva el título tal como se recibe (solo se capitaliza la primera letra)
+            # No normalizo para pasar el test
+            titulo = capitalizar_primer_letra(request.json['titulo'])
+            # Normalizo el genero porque puedo buscar por genero
             genero = capitalizar_primer_letra(normalizar_texto(request.json['genero']))
 
             pelicula_a_actualizar['titulo'] = titulo
             pelicula_a_actualizar['genero'] = genero
 
-            # Si la encuentra, la película se actualiza
-            pelicula_actualizada = pelicula_a_actualizar
-            return jsonify(pelicula_actualizada), 200 # HTTP OK
+            # Retorna la película actualizada
+            return jsonify(pelicula_a_actualizar), 200
     
     # En caso de que la película no esté en la DB, envía el siguiente mensaje
-    return jsonify({'mensaje': 'Película no encontrada'}), 404 # HTTP Not Found
+    return jsonify({'mensaje': 'Película no encontrada'}), 404
 
 
 @app.delete("/peliculas/<int:id>")
