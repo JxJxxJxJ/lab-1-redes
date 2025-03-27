@@ -2,6 +2,35 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.3.0 - 2025-03-27
+#### Bug Fixes
+- **(actuarlizar_pelicula)** No normalizar titulo - (1502df9) - Jx
+- **(main)** Normalización al actualizar película p/ uniformidad y cambios menores - (d047a2d) - Ferca
+- **(test_pytest_main)** Tests 4/5 - (4052643) - Ferca
+#### Features
+- **(obtener_nuevo_id)** Añadida una versión alternativa para obtener nuevos IDs al agregar películas - (0695c73) - Ferca
+- **(tests)** Tests para casos de obtener_pelicula hechos - (174257f) - Ferca
+- **(tests)** Tests para sugerir_película_aleatoria y sugerir_pelicula_aleatoria_por_genero hechos - (3f0a5ce) - Ferca
+- Se agregan tests para casos de error - (e58e9e9) - Christian
+- Se agregan pytest para el manejo de errores al actualizar y eliminar una pelicula - (539e70c) - Christian
+- Se agregan los pytest de obtener_peliculas_por_genero y buscar_peliculas_por_titulo - (e725cdf) - Christian
+- Se agregan a test.py los tests para obtener_peliculas_por_genero y buscar_peliculas_por_titulo - (5645072) - Christian
+- Se agrega obtener_pelicula_por_genero y buscar_peliculas_por_titulo - (d213a61) - Christian
+- sugerir_pelicula_aleatoria() y sugerir_pelicula_aleatoria_por_genero(genero) hechos - (621c13d) - Ferca
+- obtener_pelicula(id), actualizar_pelicula(id), eliminar_pelicula(id) hechos - (06328f7) - Ferca
+#### Miscellaneous Chores
+- **(ignorar)** Agregar el enunciado - (18e21f6) - Jx
+- manejo de errores y cambios menores - (f379e5a) - Christian
+#### Refactoring
+- **(agregar_pelicula)** Normalización de títulos y géneros al añadir una nueva película - (456ea17) - Ferca
+#### Style
+- **(ignorar)** Uso *.pdf mejor - (d0f2783) - Jx
+- Formato PEP 8 y algunas correcciones de comentarios - (2e25292) - Ferca
+#### Tests
+- **(delProfeMatias)** agregar tests - (348a535) - Jx
+
+- - -
+
 ## 0.2.0 - 2025-03-19
 #### Features
 - **(feriado_por_tipo,recomendacion)** hechos - (d91fae7) - Gaspar Saenz Valiente
