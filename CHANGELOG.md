@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 1.0.0 - 2025-03-27
+#### Miscellaneous Chores
+- Release 1.0.0 - (117012b) - Jx
+
+- - -
+
 ## 0.4.0 - 2025-03-27
 #### Features
 - **(README)** README con video y slides subidos - (52f3ea8) - Ferca
