@@ -2,6 +2,15 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.4.0 - 2025-03-27
+#### Features
+- **(README)** README con video y slides subidos - (52f3ea8) - Ferca
+#### Miscellaneous Chores
+- **(rls)** release - (d2cb560) - Jx
+- release 1.0.0 - (be4359a) - Jx
+
+- - -
+
 ## 0.3.0 - 2025-03-27
 #### Bug Fixes
 - **(actuarlizar_pelicula)** No normalizar titulo - (1502df9) - Jx
